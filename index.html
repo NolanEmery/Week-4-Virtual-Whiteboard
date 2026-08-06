@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IdeaForge — Creative Idea Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="#000"/>
+            <path d="M8 14L12 10L16 14L20 10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 18L12 14L16 18L20 14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h1>IdeaForge</h1>
+        </div>
+        <span class="subtitle">Creative Idea Manager for Dev Teams</span>
+      </div>
+      <div class="header-right">
+        <div class="team-avatars">
+          <div class="avatar" style="background:#000;color:#fff">NL</div>
+          <div class="avatar" style="background:#333;color:#fff">AK</div>
+          <div class="avatar" style="background:#666;color:#fff">MR</div>
+          <div class="avatar add-avatar">+</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="board">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Board
+      </button>
+      <button class="tab" data-tab="list">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="7" width="14" height="2" rx="1"/><rect x="1" y="12" width="14" height="2" rx="1"/></svg>
+        Categorized List
+      </button>
+    </nav>
+
+    <!-- Board Tab -->
+    <main class="tab-content active" id="tab-board">
+      <div class="board-layout">
+        <!-- Whiteboard Section -->
+        <section class="whiteboard-section">
+          <div class="section-header">
+            <h2>Whiteboard</h2>
+            <div class="whiteboard-tools">
+              <button class="tool-btn active" data-tool="pen" title="Pen">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5Z"/></svg>
+              </button>
+              <button class="tool-btn" data-tool="eraser" title="Eraser">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 14H14M5.5 11.5L2 8L8 2L14 8L10.5 11.5H5.5Z"/></svg>
+              </button>
+              <button class="tool-btn" data-tool="clear" title="Clear All">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+              <select class="stroke-select" id="strokeWidth">
+                <option value="2">Thin</option>
+                <option value="4" selected>Medium</option>
+                <option value="8">Thick</option>
+              </select>
+              <input type="color" id="strokeColor" value="#000000" class="color-pick" title="Stroke Color" />
+            </div>
+          </div>
+          <div class="whiteboard-container">
+            <canvas id="whiteboard"></canvas>
+          </div>
+        </section>
+
+        <!-- Ideas Section -->
+        <section class="ideas-section">
+          <div class="section-header">
+            <h2>Ideas</h2>
+            <span class="idea-count" id="ideaCount">0 ideas</span>
+          </div>
+
+          <!-- Add Idea Form -->
+          <div class="add-idea-form">
+            <div class="form-row">
+              <input type="text" id="ideaTitle" placeholder="Enter your idea title..." class="idea-input" />
+              <button class="send-btn" id="sendBtn" title="Send Idea">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M3 10L17 3L10 17L9 11L3 10Z" fill="currentColor"/>
+                </svg>
+                Send
+              </button>
+            </div>
+            <textarea id="ideaDescription" placeholder="Describe your idea in detail..." class="idea-textarea" rows="2"></textarea>
+          </div>
+
+          <!-- Ideas Grid (Drag & Drop) -->
+          <div class="ideas-grid" id="ideasGrid">
+            <!-- Ideas will be rendered here -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- List Tab -->
+    <main class="tab-content" id="tab-list">
+      <div class="list-layout">
+        <div class="list-header">
+          <h2>Ideas by Category</h2>
+          <p class="list-subtitle">Categories are automatically assigned by AI when ideas are added</p>
+        </div>
+        <div class="category-list" id="categoryList">
+          <!-- Categories rendered here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Idea Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="ideaModal">
+      <div class="modal-header">
+        <h3 id="modalTitle"></h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label>Category</label>
+          <span class="category-badge" id="modalCategory"></span>
+        </div>
+        <div class="modal-field">
+          <label>Description</label>
+          <p id="modalDescription"></p>
+        </div>
+        <div class="modal-field">
+          <label>Contributors</label>
+          <div class="contributors-editor" id="modalContributors"></div>
+          <div class="add-contributor-row">
+            <input type="text" id="newContributor" placeholder="Add contributor name..." class="contributor-input" />
+            <button class="add-contributor-btn" id="addContributorBtn">Add</button>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Priority</label>
+          <select id="modalPriority" class="priority-select">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-delete" id="modalDelete">Delete Idea</button>
+        <button class="btn-save" id="modalSave">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
